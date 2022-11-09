@@ -8,6 +8,7 @@ class Publish_manager(TestCase):
         objects_queryset_with_status_published = Post.objects.filter(
             status="published"
         )
+
         self.assertQuerysetEqual(
             published_queryset, objects_queryset_with_status_published
         )
