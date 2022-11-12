@@ -14,6 +14,23 @@ class PostListView(ListView):
     template_name = "blog/post/list.html"
 
 
+def getCommentsoFPost(post):
+    return post.comments.filter(active=True)
+
+
+def check_valid_comment_to_save(comment_form, post):
+    new_comment = comment_form.save(commit=False)
+    new_comment.post = post
+    new_comment.save()
+    return new_comment
+
+
+def check_comment_form_validity_and_save_comment(comment_form, post):
+    if comment_form.is_valid():
+        new_comment = check_valid_comment_to_save(comment_form, post)
+        return new_comment
+
+
 def post_detail(request, year, month, day, post):
     post = get_object_or_404(
         Post,
@@ -23,7 +40,28 @@ def post_detail(request, year, month, day, post):
         publish__month=month,
         publish__day=day,
     )
-    return render(request, "blog/post/detail.html", {"post": post})
+    comments = getCommentsoFPost(post)
+    new_comment = None
+
+    if request.method == "POST":
+        comment_form = CommentForm(data=request.POST)
+        new_comment = check_comment_form_validity_and_save_comment(
+            comment_form, post
+        )
+
+    else:
+        comment_form = CommentForm()
+
+    return render(
+        request,
+        "blog/post/detail.html",
+        {
+            "post": post,
+            "comments": comments,
+            "new_comment": new_comment,
+            "comment_form": comment_form,
+        },
+    )
 
 
 class PostShareView(SuccessMessageMixin, FormView):
