@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from typing import ChainMap
 from taggit.managers import TaggableManager
+from django.db.models import Count
 
 
 class PublishedManager(models.Manager):
@@ -56,6 +57,15 @@ class Post(models.Model):
 
     def get_active_comments(self):
         return self.comments.filter(active=True)
+        
+    def get_top_four_similar_posts(self):
+        post_tag_ids = self.tags.values_list("id", flat=True)
+        similar_posts = Post.published.filter(tags__in=post_tag_ids).exclude(
+            id=self.id
+        )
+        return similar_posts.annotate(same_tags=Count("tags")).order_by(
+            "-same_tags", "-publish"
+        )[:4]
 
 
 class Comment(models.Model):
