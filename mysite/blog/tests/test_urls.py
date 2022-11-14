@@ -48,3 +48,6 @@ class TestUrls(ModelMixinTestCase, SimpleTestCase):
             ).func.view_class,
             PostListByTagview,
         )
+
+    def test_post_search_url_is_resolved(self):
+        self.assertEquals(resolve(self.search_url).func, post_search)
