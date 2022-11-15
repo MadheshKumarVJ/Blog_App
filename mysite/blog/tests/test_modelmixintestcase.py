@@ -23,9 +23,10 @@ class ModelMixinTestCase(TestCase):
             author=self.user,
             body="Testing Published",
             status="published",
+            slug="published",
         )
 
-        self.list_url = reverse("blog:post_list")
+        self.post_list_url = reverse("blog:post_list")
         self.post_detail_url = reverse(
             "blog:post_detail",
             args=[
