@@ -10,7 +10,6 @@ class ModelMixinTestCase(TestCase):
             username="maddy",
             password="123",
         )
-        self.published_queryset = Post.published.all()
 
         self.draft_post = Post.objects.create(
             title="Draft",
@@ -24,4 +23,36 @@ class ModelMixinTestCase(TestCase):
             body="Testing Published",
             status="published",
             slug="published",
+        )
+
+        self.second_published_post = Post.objects.create(
+            title="Published2",
+            author=self.user,
+            body="Testing Published2",
+            status="published",
+            slug="published2",
+        )
+
+        self.third_published_post = Post.objects.create(
+            title="Published3",
+            author=self.user,
+            body="Testing Published3",
+            status="published",
+            slug="published3",
+        )
+
+        self.fourth_published_post = Post.objects.create(
+            title="Published4",
+            author=self.user,
+            body="Testing Published4",
+            status="published",
+            slug="published4",
+        )
+
+        self.five_published_post = Post.objects.create(
+            title="Published5",
+            author=self.user,
+            body="Testing Published5",
+            status="published",
+            slug="published5",
         )
