@@ -16,7 +16,6 @@ def paginate(queryset, page, per_page):
 
 
 def post_list(request):
-    # paginator = Paginator(Post.published.all(), 3)
     posts = paginate(Post.published.all(), request.GET.get("page"), 3)
     return render(
         request,
