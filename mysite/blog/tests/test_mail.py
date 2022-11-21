@@ -3,7 +3,7 @@ from blog.tests.test_modelmixintestcase import ModelMixinTestCase
 from django.urls import reverse
 
 
-class Test_emailTemplate(ModelMixinTestCase, TestCase):
+class TestEmail(ModelMixinTestCase, TestCase):
     def test_post_share_template_used(self):
         self.post_share_url = reverse(
             "blog:post_share", args=[self.published_post.id]
