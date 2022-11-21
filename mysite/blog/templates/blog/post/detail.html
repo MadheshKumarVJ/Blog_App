@@ -4,6 +4,13 @@
 {% endblock %}
 {% block content %}
     <h1>{{ post.title }}</h1>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    {% endif %}
+    </ul>
     <p class="date">Published {{ post.publish }} by {{ post.author }}</p>
     {{ post.body|linebreaks }}
     <p>
@@ -27,14 +34,10 @@
   {% empty %}
     <p>There are no comments yet.</p>
   {% endfor %}
-  {% if new_comment %}
-    <h2>Your comment has been added.</h2>
-  {% else %}
     <h2>Add a new comment</h2>
     <form method="post">
       {{ comment_form.as_p }}
       {% csrf_token %}
       <p><input type="submit" value="Add comment"></p>
     </form>
-  {% endif %}
 {% endblock %}

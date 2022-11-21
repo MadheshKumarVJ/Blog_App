@@ -2,9 +2,13 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, FormView
 from .models import Post
 from .forms import EmailPostForm
+from .models import Post, Comment
+from .forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
+from django.shortcuts import redirect
 
 
 class PostListView(ListView):
@@ -14,21 +18,12 @@ class PostListView(ListView):
     template_name = "blog/post/list.html"
 
 
-def getCommentsoFPost(post):
-    return post.comments.filter(active=True)
-
-
-def check_valid_comment_to_save(comment_form, post):
-    new_comment = comment_form.save(commit=False)
-    new_comment.post = post
-    new_comment.save()
-    return new_comment
-
-
-def check_comment_form_validity_and_save_comment(comment_form, post):
+def add_comment(comment_form, post):
     if comment_form.is_valid():
-        new_comment = check_valid_comment_to_save(comment_form, post)
-        return new_comment
+        comment = comment_form.save(commit=False)
+        comment.post = post
+        comment.save()
+        return comment
 
 
 def post_detail(request, year, month, day, post):
@@ -40,25 +35,20 @@ def post_detail(request, year, month, day, post):
         publish__month=month,
         publish__day=day,
     )
-    comments = getCommentsoFPost(post)
-    new_comment = None
 
-    if request.method == "POST":
-        comment_form = CommentForm(data=request.POST)
-        new_comment = check_comment_form_validity_and_save_comment(
-            comment_form, post
-        )
+    comment_form = CommentForm(data=request.POST or None)
+    comments = add_comment(comment_form, post)
+    comment_form = CommentForm()
+    redirect(reverse("blog:post_detail", args=[year, month, day, post.slug]))
+    messages.success(request, message="Comment added successfully")
 
-    else:
-        comment_form = CommentForm()
-
+    comments = Comment.activated.filter(post=post)
     return render(
         request,
         "blog/post/detail.html",
         {
             "post": post,
             "comments": comments,
-            "new_comment": new_comment,
             "comment_form": comment_form,
         },
     )
