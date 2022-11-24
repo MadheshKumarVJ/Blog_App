@@ -35,6 +35,9 @@ class Post(models.Model):
     objects = models.Manager()
     published = PublishedManager()
 
+    def active(self):
+        return self.filter(active=True)
+
     class Meta:
         ordering = ("-publish",)
 
@@ -53,15 +56,6 @@ class Post(models.Model):
         )
 
 
-class CommentsActiveManager(models.Manager):
-    def get_queryset(self):
-        return (
-            super(CommentsActiveManager, self)
-            .get_queryset()
-            .filter(active=True)
-        )
-
-
 class Comment(models.Model):
     post = models.ForeignKey(
         Post, on_delete=models.CASCADE, related_name="comments"
@@ -72,9 +66,6 @@ class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
-
-    objects = models.Manager()
-    activated = CommentsActiveManager()
 
     class Meta:
         ordering = ("created",)

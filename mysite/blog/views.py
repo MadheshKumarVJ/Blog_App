@@ -1,7 +1,5 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, FormView
-from .models import Post
-from .forms import EmailPostForm
 from .models import Post, Comment
 from .forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
@@ -42,7 +40,7 @@ def post_detail(request, year, month, day, post):
     redirect(reverse("blog:post_detail", args=[year, month, day, post.slug]))
     messages.success(request, message="Comment added successfully")
 
-    comments = Comment.activated.filter(post=post)
+    comments = post.comments.all()
     return render(
         request,
         "blog/post/detail.html",
