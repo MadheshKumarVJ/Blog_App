@@ -35,9 +35,6 @@ class Post(models.Model):
     objects = models.Manager()
     published = PublishedManager()
 
-    def active(self):
-        return self.filter(active=True)
-
     class Meta:
         ordering = ("-publish",)
 
