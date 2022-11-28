@@ -16,11 +16,12 @@ class PostListView(ListView):
     template_name = "blog/post/list.html"
 
 
-def add_comment(comment_form, post):
+def add_comment(request, comment_form, post):
     if comment_form.is_valid():
         comment = comment_form.save(commit=False)
         comment.post = post
         comment.save()
+        messages.success(request, message="Comment added successfully")
         return comment
 
 
@@ -34,19 +35,16 @@ def post_detail(request, year, month, day, post):
         publish__day=day,
     )
 
-    comment_form = CommentForm(data=request.POST or None)
-    comments = add_comment(comment_form, post)
+    comment_form = add_comment(
+        request, CommentForm(data=request.POST or None), post
+    )
     comment_form = CommentForm()
-    redirect(reverse("blog:post_detail", args=[year, month, day, post.slug]))
-    messages.success(request, message="Comment added successfully")
 
-    comments = post.comments.all()
     return render(
         request,
         "blog/post/detail.html",
         {
             "post": post,
-            "comments": comments,
             "comment_form": comment_form,
         },
     )

@@ -52,6 +52,9 @@ class Post(models.Model):
             ],
         )
 
+    def get_active_comments(self):
+        return self.comments.filter(active=True)
+
 
 class Comment(models.Model):
     post = models.ForeignKey(
