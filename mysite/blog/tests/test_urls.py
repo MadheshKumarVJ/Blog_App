@@ -1,8 +1,12 @@
 from django.test import SimpleTestCase
 from django.urls import resolve, reverse
-from blog.views import PostListView, post_detail, PostShareView, post_share, PostListByTagview
+from blog.views import (
+    PostListView,
+    post_detail,
+    PostShareView,
+    PostListByTagview,
+)
 from blog.tests.test_modelmixintestcase import ModelMixinTestCase
-
 
 
 class TestUrls(ModelMixinTestCase, SimpleTestCase):
@@ -32,10 +36,15 @@ class TestUrls(ModelMixinTestCase, SimpleTestCase):
             resolve(
                 reverse("blog:post_share", args=[self.published_post.id])
             ).func.view_class,
-            PostShareView,)
-        self.assertEquals(resolve(self.post_share_url).func, post_share)
+            PostShareView,
+        )
 
     def test_post_list_by_tag_is_resolved(self):
+        self.add_tag = self.published_post.tags.add("test")
+        self.tag = self.published_post.tags.first()
         self.assertEquals(
-            resolve(self.post_list_by_tag).func.view_class, PostListByTagview
+            resolve(
+                reverse("blog:post_list_by_tag", args=[self.tag.slug])
+            ).func.view_class,
+            PostListByTagview,
         )
