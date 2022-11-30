@@ -15,15 +15,6 @@ class PostListView(ListView):
     template_name = "blog/post/list.html"
 
 
-# def add_comment(request, comment_form, post):
-#     if comment_form.is_valid():
-#         comment = comment_form.save(commit=False)
-#         comment.post = post
-#         comment.save()
-#         messages.success(request, message="Comment added successfully")
-#         return comment
-
-
 def add_comment(request, post_id):
     post = get_object_or_404(Post, id=post_id, status="published")
 
